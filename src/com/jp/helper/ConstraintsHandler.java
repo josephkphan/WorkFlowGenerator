@@ -1,48 +1,35 @@
 package com.jp.helper;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by jphan on 10/8/16.
  */
 public class ConstraintsHandler {
-    public static int num_users;
-    public static int num_tasks;
-    public static int num_orders;
-    public static int[][] authorizations;
-    public static int[][] task_probability;
-    public static int[][] user_capability;
-    public static int[]task_orders;
-    public static HashMap<Integer, Set<Integer>> binding_constraints =  new HashMap<Integer, Set<Integer>>();
-    public static HashMap<Integer, Set<Integer>> separating_constraints =  new HashMap<Integer, Set<Integer>>();
-    public static int[][]bod,sod;
-    public static boolean[] boolBoD, boolSoD;
-    public static int numBoD, numSoD;
-    public static int counter;
+    public int num_users;
+    public int num_tasks;
+    public int num_orders;
+    public int[][] authorizations;
+    public int[][] task_probability;
+    public int[][] user_capability;
+    public int[] task_orders;
+    public HashMap<Integer, Set<Integer>> binding_constraints = new HashMap<Integer, Set<Integer>>();
+    public HashMap<Integer, Set<Integer>> separating_constraints = new HashMap<Integer, Set<Integer>>();
+    public int[][] bod, sod;
+    public boolean[] boolBoD, boolSoD;
+    public int numBoD, numSoD;
+    public int counter;
     private Printer p;
 
-    public ConstraintsHandler(int num_users, int num_tasks, int num_orders,int authorize, int BoDPercent, int SodPercent) {
+    public ConstraintsHandler(int num_users, int num_tasks, int num_orders, int authorize, int BoDPercent, int SodPercent) {
         p = new Printer(this);
-        initialize(num_users,num_tasks,num_orders);
-        createAllConstraints(BoDPercent,SodPercent, authorize);
+        initialize(num_users, num_tasks, num_orders);
+        createAllConstraints(BoDPercent, SodPercent, authorize);
         createSoDBoD();
         removeRedundantBinding();
     }
 
-    private void createAllConstraints(int BoDPercent, int SoDPercent, int authorize){
+    private void createAllConstraints(int BoDPercent, int SoDPercent, int authorize) {
         create_task_orders();
         create_authorizations_matrix(authorize);
         create_user_capability_matrix();
@@ -52,39 +39,39 @@ public class ConstraintsHandler {
 
     }
 
-    private void removeRedundantBinding(){
+    private void removeRedundantBinding() {
         boolSoD = new boolean[num_tasks];
         boolBoD = new boolean[num_tasks];
-        for(int i=0; i<num_tasks; i++){
-            boolBoD[i]=boolSoD[i]=true;
+        for (int i = 0; i < num_tasks; i++) {
+            boolBoD[i] = boolSoD[i] = true;
         }
-        for(int i=0; i<num_tasks; i++){
-            for(int j=0; j<num_tasks; j++){
-                if(bod[i][j]==1 && j>i)
+        for (int i = 0; i < num_tasks; i++) {
+            for (int j = 0; j < num_tasks; j++) {
+                if (bod[i][j] == 1 && j > i)
                     boolBoD[j] = false;
-                if(sod[i][j]==1 && j>i)
+                if (sod[i][j] == 1 && j > i)
                     boolSoD[j] = false;
             }
         }
-        for(int i=0; i<num_tasks; i++)
-            if(separating_constraints.containsKey(i) && separating_constraints.get(i).size()==1)
+        for (int i = 0; i < num_tasks; i++)
+            if (separating_constraints.containsKey(i) && separating_constraints.get(i).size() == 1)
                 boolSoD[i] = false;
-        for(int i=0; i<num_tasks; i++)
-            if(binding_constraints.containsKey(i) && binding_constraints.get(i).size()==1)
+        for (int i = 0; i < num_tasks; i++)
+            if (binding_constraints.containsKey(i) && binding_constraints.get(i).size() == 1)
                 boolBoD[i] = false;
 
         numBoD = numSoD = 0;
 
-        for(int i=0; i<num_tasks; i++){
-            if(boolBoD[i])
+        for (int i = 0; i < num_tasks; i++) {
+            if (boolBoD[i])
                 numBoD++;
-            if(boolSoD[i])
+            if (boolSoD[i])
                 numSoD++;
         }
     }
 
     //Precondition: users, tasks, orders > 0
-    private void initialize(int users,int tasks, int orders){
+    private void initialize(int users, int tasks, int orders) {
         num_users = users;
         num_tasks = tasks;
         num_orders = orders;
@@ -93,116 +80,118 @@ public class ConstraintsHandler {
         user_capability = new int[num_users][num_tasks];
         task_orders = new int[num_tasks];
         Set<Integer> temp;
-        for(int i=0; i<num_tasks;i++){
+        for (int i = 0; i < num_tasks; i++) {
             temp = new HashSet<Integer>();
             temp.add(i);
-            separating_constraints.put(i,temp);
+            separating_constraints.put(i, temp);
             temp = new HashSet<Integer>();
             temp.add(i);
             binding_constraints.put(i, temp);
         }
-        System.out.println("users:" + num_users + "\ntasks: "+num_tasks+"\norders: "+num_orders);
+        System.out.println("users:" + num_users + "\ntasks: " + num_tasks + "\norders: " + num_orders);
     }
 
-    private void create_authorizations_matrix(int factor){
+    private void create_authorizations_matrix(int factor) {
         int rand, repetitions;
-        int[]check = new int[num_tasks];
+        int[] check = new int[num_tasks];
         Random random = new Random();
-        for(int i=0; i<num_tasks; i++){
-            if(check[i]==1)
+        for (int i = 0; i < num_tasks; i++) {
+            if (check[i] == 1)
                 continue;
             Set<Integer> temp = binding_constraints.get(i);
             Iterator it = temp.iterator();
             Object[] tmp = temp.toArray();
-            repetitions = factor/tmp.length + 1;
-            for(int k=0; k<repetitions; k++){
+            repetitions = factor / tmp.length + 1;
+            for (int k = 0; k < repetitions; k++) {
                 rand = random.nextInt(num_users);
-                if(authorizations[rand][(Integer)tmp[0]]==1){
+                if (authorizations[rand][(Integer) tmp[0]] == 1) {
                     k--;
                     continue;
                 }
-                for(int j=0; j<tmp.length;j++){
-                    authorizations[rand][(Integer)tmp[j]]=1;
-                    check[(Integer)tmp[j]]=1;
+                for (int j = 0; j < tmp.length; j++) {
+                    authorizations[rand][(Integer) tmp[j]] = 1;
+                    check[(Integer) tmp[j]] = 1;
                 }
             }
         }
-        p.array(authorizations,"Authorizations Matrix");
+        p.array(authorizations, "Authorizations Matrix");
     }
 
-    private void create_probability_matrix(){
+    private void create_probability_matrix() {
         Random random = new Random();
         int rand;
         int row_min;
         int row_max = 100;
-        for(int i=0; i<num_tasks; i++){
-            if(i==num_users-1)	//for last row. can't have probability 1
+        for (int i = 0; i < num_tasks; i++) {
+            if (i == num_users - 1)    //for last row. can't have probability 1
                 row_max = 99;
-            row_min=0;
+            row_min = 0;
 
-            for(int j=0; j<num_tasks; j++){
-                if(row_min==row_max)
-                    break;	//probability already reached 0
+            for (int j = 0; j < num_tasks; j++) {
+                if (row_min == row_max)
+                    break;    //probability already reached 0
 
-                if(i==j){
-                    task_probability[i][j]=0;
-                }else if(i==0 && j==num_tasks-1){	//first row probability must = 1?? TODO: is that true?
+                if (i == j) {
+                    task_probability[i][j] = 0;
+                } else if (i == 0 && j == num_tasks - 1) {
                     task_probability[i][j] = 100 - row_min;
-                }else{
+                } else {
                     rand = random.nextInt(row_max - row_min);
-                    row_min+=rand;
-                    task_probability[i][j]=rand;
+                    row_min += rand;
+                    task_probability[i][j] = rand;
                 }
             }
 
         }
-        p.array(task_probability,"Probability Matrix");
+        p.array(task_probability, "Probability Matrix");
 
     }
-    private void create_user_capability_matrix(){
+
+    private void create_user_capability_matrix() {
         Random random = new Random();
 
-        for(int i=0; i<num_users; i++){
-            for(int j=0; j<num_tasks; j++){
-                if(authorizations[i][j]==0)
+        for (int i = 0; i < num_users; i++) {
+            for (int j = 0; j < num_tasks; j++) {
+                if (authorizations[i][j] == 0)
                     continue;
-                user_capability[i][j]=10000000;
+                user_capability[i][j] = 10000000;
             }
         }
-        p.array(user_capability,"User Capability Matrix");
+        p.array(user_capability, "User Capability Matrix");
     }
 
-    private void create_task_orders(){
-        for (int i=0; i<num_tasks; i++){
-            task_orders[i]= num_orders;
+    private void create_task_orders() {
+        for (int i = 0; i < num_tasks; i++) {
+            task_orders[i] = num_orders;
         }
-        p.array(task_orders,"Task Orders Matrix");
+        p.array(task_orders, "Task Orders Matrix");
 
     }
-    private void create_binding_constraints( int percent){
+
+    private void create_binding_constraints(int percent) {
         double dx = percent * .01 * num_tasks;
         int num_constraints = (int) dx;
         Random random = new Random();
         int task1, task2;
-        Set<Integer> temp1,temp2, empty_set;
-        for(int i=0; i<num_constraints; i++){
+        Set<Integer> temp1, temp2, empty_set;
+        for (int i = 0; i < num_constraints; i++) {
             task1 = task2 = 0;
-            while(task1==task2){
+            while (task1 == task2) {
                 task1 = random.nextInt(num_tasks);
                 task2 = random.nextInt(num_tasks);
             }
             //System.out.print("\n tasks: "+ task1 +" " + task2 + "\n");
 
-            if(!binding_constraints.containsKey(task1)){
+            if (!binding_constraints.containsKey(task1)) {
                 empty_set = new HashSet<Integer>();
                 empty_set.add(task1);
-                binding_constraints.put(task1,empty_set);
+                binding_constraints.put(task1, empty_set);
             }
 
-            if(!binding_constraints.containsKey(task2)){
+            if (!binding_constraints.containsKey(task2)) {
                 empty_set = new HashSet<Integer>();
                 empty_set.add(task2);
-                binding_constraints.put(task2,empty_set);
+                binding_constraints.put(task2, empty_set);
             }
             temp1 = binding_constraints.get(task1);
             temp2 = binding_constraints.get(task2);
@@ -214,41 +203,43 @@ public class ConstraintsHandler {
         }
         p.binding_constraints();
     }
-    private void update_binding_constraints(Set<Integer> set){
+
+    private void update_binding_constraints(Set<Integer> set) {
         Iterator it = set.iterator();
         Set<Integer> temp;
         while (it.hasNext()) {
             Object element = it.next();
-            temp = binding_constraints.get((Integer)element);
+            temp = binding_constraints.get((Integer) element);
             temp.addAll(set);
         }
     }
-    private void create_separating_constraints(int c){
+
+    private void create_separating_constraints(int c) {
         double dx = c * .01 * num_tasks;
         int num_constraints = (int) dx;
         Random random = new Random();
         int task1, task2;
-        Set<Integer> temp1,temp2, empty_set;
-        for(counter=0; counter<num_constraints; counter++){
+        Set<Integer> temp1, temp2, empty_set;
+        for (counter = 0; counter < num_constraints; counter++) {
             task1 = task2 = 0;
-            while(task1==task2){
+            while (task1 == task2) {
                 task1 = random.nextInt(num_tasks);
                 task2 = random.nextInt(num_tasks);
             }
             //System.out.print("\n tasks: "+ task1 +" " + task2 + "\n");
-            if(check_is_there2(task1,task2))
+            if (check_is_there2(task1, task2))
                 continue;
 
-            if(!separating_constraints.containsKey(task1)){
+            if (!separating_constraints.containsKey(task1)) {
                 empty_set = new HashSet<Integer>();
                 empty_set.add(task1);
-                separating_constraints.put(task1,empty_set);
+                separating_constraints.put(task1, empty_set);
             }
 
-            if(!separating_constraints.containsKey(task2)){
+            if (!separating_constraints.containsKey(task2)) {
                 empty_set = new HashSet<Integer>();
                 empty_set.add(task2);
-                separating_constraints.put(task2,empty_set);
+                separating_constraints.put(task2, empty_set);
             }
             temp1 = separating_constraints.get(task1);
             temp2 = separating_constraints.get(task2);
@@ -261,21 +252,23 @@ public class ConstraintsHandler {
         }
         p.separating_constraints();
     }
-    private void update_separating_constraints(Set<Integer> set){
+
+    private void update_separating_constraints(Set<Integer> set) {
         Iterator it = set.iterator();
         Set<Integer> temp;
         while (it.hasNext()) {
             Object element = it.next();
-            temp = separating_constraints.get((Integer)element);
+            temp = separating_constraints.get((Integer) element);
 
             temp.addAll(set);
         }
     }
-    private boolean check_is_there2(int value1, int value2){
+
+    private boolean check_is_there2(int value1, int value2) {
         Set<Integer> temp = new HashSet<Integer>();
-        if(separating_constraints.containsKey(value1))
+        if (separating_constraints.containsKey(value1))
             temp.addAll(separating_constraints.get(value1));
-        if(separating_constraints.containsKey(value2))
+        if (separating_constraints.containsKey(value2))
             temp.addAll(separating_constraints.get(value2));
         temp.add(value1);
         temp.add(value2);
@@ -283,17 +276,17 @@ public class ConstraintsHandler {
         Iterator sep2 = temp.iterator();
         //sep2.next();
         Set<Integer> Bind;
-        while(sep.hasNext()){
+        while (sep.hasNext()) {
             Object s1 = sep.next();
-            while(sep2.hasNext()){
+            while (sep2.hasNext()) {
                 Object s2 = sep2.next();
-                if(!binding_constraints.containsKey((Integer)s2))
+                if (!binding_constraints.containsKey((Integer) s2))
                     continue;
-                Bind = binding_constraints.get((Integer)s2);
+                Bind = binding_constraints.get((Integer) s2);
                 Iterator bind = Bind.iterator();
-                while(bind.hasNext()){
+                while (bind.hasNext()) {
                     Object b = bind.next();
-                    if((Integer)s1==(Integer)b && (Integer)s1!=(Integer)s2) {
+                    if ((Integer) s1 == (Integer) b && (Integer) s1 != (Integer) s2) {
                         counter--;
                         return true;
                     }
