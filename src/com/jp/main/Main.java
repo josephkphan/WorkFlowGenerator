@@ -1,4 +1,8 @@
-package com.jp.generator;
+package com.jp.main;
+
+import com.jp.generator.CplexText;
+import com.jp.generator.Excel;
+import com.jp.generator.TextFiles;
 
 public class Main {
 
