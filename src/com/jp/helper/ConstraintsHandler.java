@@ -29,6 +29,9 @@ public class ConstraintsHandler {
     public static HashMap<Integer, Set<Integer>> binding_constraints =  new HashMap<Integer, Set<Integer>>();
     public static HashMap<Integer, Set<Integer>> separating_constraints =  new HashMap<Integer, Set<Integer>>();
     public static int[][]bod,sod;
+    public static boolean[] boolBoD, boolSoD;
+    public static int numBoD, numSoD;
+    public static int counter;
     private Printer p;
 
     public ConstraintsHandler(int num_users, int num_tasks, int num_orders,int authorize, int BoDPercent, int SodPercent) {
@@ -50,7 +53,34 @@ public class ConstraintsHandler {
     }
 
     private void removeRedundantBinding(){
+        boolSoD = new boolean[num_tasks];
+        boolBoD = new boolean[num_tasks];
+        for(int i=0; i<num_tasks; i++){
+            boolBoD[i]=boolSoD[i]=true;
+        }
+        for(int i=0; i<num_tasks; i++){
+            for(int j=0; j<num_tasks; j++){
+                if(bod[i][j]==1 && j>i)
+                    boolBoD[j] = false;
+                if(sod[i][j]==1 && j>i)
+                    boolSoD[j] = false;
+            }
+        }
+        for(int i=0; i<num_tasks; i++)
+            if(separating_constraints.containsKey(i) && separating_constraints.get(i).size()==1)
+                boolSoD[i] = false;
+        for(int i=0; i<num_tasks; i++)
+            if(binding_constraints.containsKey(i) && binding_constraints.get(i).size()==1)
+                boolBoD[i] = false;
 
+        numBoD = numSoD = 0;
+
+        for(int i=0; i<num_tasks; i++){
+            if(boolBoD[i])
+                numBoD++;
+            if(boolSoD[i])
+                numSoD++;
+        }
     }
 
     //Precondition: users, tasks, orders > 0
@@ -199,7 +229,7 @@ public class ConstraintsHandler {
         Random random = new Random();
         int task1, task2;
         Set<Integer> temp1,temp2, empty_set;
-        for(int i=0; i<num_constraints; i++){
+        for(counter=0; counter<num_constraints; counter++){
             task1 = task2 = 0;
             while(task1==task2){
                 task1 = random.nextInt(num_tasks);
@@ -263,8 +293,10 @@ public class ConstraintsHandler {
                 Iterator bind = Bind.iterator();
                 while(bind.hasNext()){
                     Object b = bind.next();
-                    if((Integer)s1==(Integer)b && (Integer)s1!=(Integer)s2)
+                    if((Integer)s1==(Integer)b && (Integer)s1!=(Integer)s2) {
+                        counter--;
                         return true;
+                    }
                 }
             }
         }

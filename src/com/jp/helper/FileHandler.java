@@ -45,9 +45,12 @@ public class FileHandler {
             //**********************avg************************//
             bufferedWriter.write("u = " +Integer.toString(c.num_users-1) + ";" );
             bufferedWriter.newLine();
-            bufferedWriter.newLine();
+
             bufferedWriter.write("t = " + Integer.toString(c.num_tasks-1) + ";");
             bufferedWriter.newLine();
+            bufferedWriter.write("b = " + Integer.toString(c.numBoD-1) + ";");
+            bufferedWriter.newLine();
+            bufferedWriter.write("s = " + Integer.toString(c.numSoD-1) + ";");
             bufferedWriter.newLine();
             // Note that write() does not automatically
             // append a newline character.
@@ -55,7 +58,6 @@ public class FileHandler {
             bufferedWriter.write("taskDemands = ");
             bufferedWriter.newLine();
             bufferedWriter.write("[ ");
-            bufferedWriter.newLine();
             for (int j=0; j<c.num_tasks; j++){
                 numberAsString = Integer.toString(c.task_orders[j]);
                 bufferedWriter.write(numberAsString);
@@ -71,6 +73,8 @@ public class FileHandler {
             bufferedWriter.write("[ ");
             bufferedWriter.newLine();
             for(int i=0; i<c.num_tasks; i++){
+                    if(c.boolBoD[i]==false)
+                        continue;
                 bufferedWriter.write("[ ");
                 for(int j=0; j<c.num_tasks; j++){
                     bufferedWriter.write(Integer.toString(c.bod[i][j]));
@@ -92,6 +96,8 @@ public class FileHandler {
             bufferedWriter.write("[ ");
             bufferedWriter.newLine();
             for(int i=0; i<c.num_tasks; i++){
+                    if(c.boolSoD[i]==false)
+                        continue;
                 bufferedWriter.write("[ ");
                 for(int j=0; j<c.num_tasks; j++){
                     bufferedWriter.write(Integer.toString(c.sod[i][j]));
