@@ -22,21 +22,21 @@ public class All {
             fe.reduceCapability(i);
             file.write_uc_file("java_uc_" + i);
             file.writeCplexUC("opl_uc_" + i);
-            System.out.println("finished UC");
 
             // Bod
             fe.reduceBoD();
             file.writeCplexBC("opl_bc_" + i);
             file.write_bc_file("java_bc_"+i);
-            System.out.println("finished BoD");
 
             //Sod
             fe.reduceSoD();
             file.write_sc_file("java_sc_" + i);
             file.writeCplexSC("opl_sc_"+i);
-            System.out.println("finished SoD");
 
-            //
+            //ua
+            fe.redunceAuthorizations();
+            file.write_ua_file("java_ua_" + i);
+            file.writeCplexUA("opl_ua_"+i);
         }
 
 

@@ -101,7 +101,8 @@ public class ConstraintsHandler {
             Set<Integer> temp = binding_constraints.get(i);
             Iterator it = temp.iterator();
             Object[] tmp = temp.toArray();
-            repetitions = factor / tmp.length + 1;
+            //repetitions = factor / tmp.length + 1;
+            repetitions = factor;
             for (int k = 0; k < repetitions; k++) {
                 rand = random.nextInt(num_users);
                 if (authorizations[rand][(Integer) tmp[0]] == 1) {

@@ -14,7 +14,7 @@ public class Main {
         numUsers = 50;
         numTasks = 2 * numUsers;
         numOrders = 10;
-        authorize = 5;
+        authorize = 10;
         bodPercent = sodPercent = 10;
         generatorType = "ALL";
 
