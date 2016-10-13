@@ -1,11 +1,14 @@
 package com.jp.helper;
 
+import org.apache.poi.hssf.record.InterfaceEndRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class FileHandler {
@@ -16,32 +19,104 @@ public class FileHandler {
     }
 
     public void writeCplexModFile() {
-        write_file();
+        writeCplexAVG("opl_avg_10");
+        write_bc_file("opl_bc_10");
+        write_sc_file("opl_sc_10");
+        write_ua_file("opl_ua_10");
+        write_uc_file("opl_uc_10");
     }
 
     public void writeJavaDataFiles() {
-        write_avg_file();
-        write_bc_file();
-        write_sc_file();
-        write_ua_file();
-        write_uc_file();
+        write_avg_file("java_avg_10");
+        write_bc_file("java_bc_10");
+        write_sc_file("java_sc_10");
+        write_ua_file("java_ua_10");
+        write_uc_file("java_uc_10");
     }
 
-    public void writeExcelFile() {
+    public void writeExcelFile(String excelName) {
         try {
-            createExcelFile();
+            createExcelFile(excelName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void write_file() {
-        String fileName = "data.txt";
+    public void writeCplexBC(String s){
+        String fileName = s + ".txt";
+        try {
+            java.io.FileWriter fileWriter =
+                    new java.io.FileWriter(fileName);
+            BufferedWriter bufferedWriter =
+                    new BufferedWriter(fileWriter);
+            bufferedWriter.write("binding = ");
+            bufferedWriter.newLine();
+            bufferedWriter.write("[ ");
+            bufferedWriter.newLine();
+            for (int i = 0; i < c.num_tasks; i++) {
+                if (!c.boolBoD[i])
+                    continue;
+                bufferedWriter.write("[ ");
+                for (int j = 0; j < c.num_tasks; j++) {
+                    bufferedWriter.write(Integer.toString(c.bod[i][j]));
+                    if (j != c.num_tasks - 1)
+                        bufferedWriter.write(", ");
+
+                }
+                bufferedWriter.write("] ");
+                if (i != c.num_tasks - 1)
+                    bufferedWriter.write(", ");
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write("]; ");
+            bufferedWriter.newLine();
+            bufferedWriter.newLine();
+
+            bufferedWriter.close();
+        } catch (IOException ex) {
+            System.out.println("Error writing to file '" + fileName + "'");
+        }
+    }
+    public void writeCplexSC(String s){
+        String fileName = s + ".txt";
+        try {
+            java.io.FileWriter fileWriter =
+                    new java.io.FileWriter(fileName);
+            BufferedWriter bufferedWriter =
+                    new BufferedWriter(fileWriter);
+            bufferedWriter.write("separation = ");
+            bufferedWriter.newLine();
+            bufferedWriter.write("[ ");
+            bufferedWriter.newLine();
+            for (int i = 0; i < c.num_tasks; i++) {
+                if (!c.boolSoD[i])
+                    continue;
+                bufferedWriter.write("[ ");
+                for (int j = 0; j < c.num_tasks; j++) {
+                    bufferedWriter.write(Integer.toString(c.sod[i][j]));
+                    if (j != c.num_tasks - 1)
+                        bufferedWriter.write(", ");
+                }
+                bufferedWriter.write("] ");
+                if (i != c.num_tasks - 1)
+                    bufferedWriter.write(", ");
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write("]; ");
+            bufferedWriter.newLine();
+            bufferedWriter.newLine();
+
+            bufferedWriter.close();
+        } catch (IOException ex) {
+            System.out.println("Error writing to file '" + fileName + "'");
+        }
+    }
+    public void writeCplexAVG(String s){
+        String fileName = s + ".txt";
         String numberAsString;
         try {
-            FileWriter fileWriter =
-                    new FileWriter(fileName);
-
+            java.io.FileWriter fileWriter =
+                    new java.io.FileWriter(fileName);
             BufferedWriter bufferedWriter =
                     new BufferedWriter(fileWriter);
             //**********************sizes************************//
@@ -68,53 +143,20 @@ public class FileHandler {
             bufferedWriter.write("]; ");
             bufferedWriter.newLine();
             bufferedWriter.newLine();
-            //**********************BoD************************//
-            bufferedWriter.write("binding = ");
-            bufferedWriter.newLine();
-            bufferedWriter.write("[ ");
-            bufferedWriter.newLine();
-            for (int i = 0; i < c.num_tasks; i++) {
-                if (!c.boolBoD[i])
-                    continue;
-                bufferedWriter.write("[ ");
-                for (int j = 0; j < c.num_tasks; j++) {
-                    bufferedWriter.write(Integer.toString(c.bod[i][j]));
-                    if (j != c.num_tasks - 1)
-                        bufferedWriter.write(", ");
+            bufferedWriter.close();
+        } catch (IOException ex) {
+            System.out.println("Error writing to file '" + fileName + "'");
+        }
+    }
 
-                }
-                bufferedWriter.write("] ");
-                if (i != c.num_tasks - 1)
-                    bufferedWriter.write(", ");
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.write("]; ");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            //**********************SoD************************//
-            bufferedWriter.write("separation = ");
-            bufferedWriter.newLine();
-            bufferedWriter.write("[ ");
-            bufferedWriter.newLine();
-            for (int i = 0; i < c.num_tasks; i++) {
-                if (!c.boolSoD[i])
-                    continue;
-                bufferedWriter.write("[ ");
-                for (int j = 0; j < c.num_tasks; j++) {
-                    bufferedWriter.write(Integer.toString(c.sod[i][j]));
-                    if (j != c.num_tasks - 1)
-                        bufferedWriter.write(", ");
-                }
-                bufferedWriter.write("] ");
-                if (i != c.num_tasks - 1)
-                    bufferedWriter.write(", ");
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.write("]; ");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-
-            //**********************authorize************************//
+    public void writeCplexUA(String s){
+        String fileName = s + ".txt";
+        String numberAsString;
+        try {
+            java.io.FileWriter fileWriter =
+                    new java.io.FileWriter(fileName);
+            BufferedWriter bufferedWriter =
+                    new BufferedWriter(fileWriter);
             bufferedWriter.write("authorizations = ");
             bufferedWriter.newLine();
             bufferedWriter.write("[ ");
@@ -135,7 +177,20 @@ public class FileHandler {
             bufferedWriter.write("];");
             bufferedWriter.newLine();
             bufferedWriter.newLine();
-            //**********************uc************************//
+
+            bufferedWriter.close();
+        } catch (IOException ex) {
+            System.out.println("Error writing to file '" + fileName + "'");
+        }
+    }
+    public void writeCplexUC(String s){
+        String fileName = s + ".txt";
+        String numberAsString;
+        try {
+            java.io.FileWriter fileWriter =
+                    new java.io.FileWriter(fileName);
+            BufferedWriter bufferedWriter =
+                    new BufferedWriter(fileWriter);
             bufferedWriter.write("userCapability = ");
             bufferedWriter.newLine();
             bufferedWriter.write("[");
@@ -162,8 +217,8 @@ public class FileHandler {
         }
     }
 
-    private void write_avg_file() {
-        String fileName = "avg.txt";
+    public void write_avg_file(String s) {
+        String fileName = s + ".txt";
         String numberAsString;
         try {
             java.io.FileWriter fileWriter =
@@ -182,8 +237,8 @@ public class FileHandler {
         }
     }
 
-    private void write_ua_file() {
-        String fileName = "ua.txt";
+    public void write_ua_file(String s) {
+        String fileName = s + ".txt";
         String numberAsString;
         try {
             java.io.FileWriter fileWriter =
@@ -207,8 +262,8 @@ public class FileHandler {
         }
     }
 
-    private void write_uc_file() {
-        String fileName = "uc.txt";
+    public void write_uc_file(String s) {
+        String fileName = s + ".txt";
         String numberAsString;
         try {
             java.io.FileWriter fileWriter =
@@ -232,8 +287,8 @@ public class FileHandler {
         }
     }
 
-    private void write_bc_file() {
-        String fileName = "bc.txt";
+    public void write_bc_file(String s) {
+        String fileName = s + ".txt";
         try {
             java.io.FileWriter fileWriter =
                     new java.io.FileWriter(fileName);
@@ -255,8 +310,8 @@ public class FileHandler {
         }
     }
 
-    private void write_sc_file() {
-        String fileName = "sc.txt";
+    public void write_sc_file(String s) {
+        String fileName = s + ".txt";
         try {
             java.io.FileWriter fileWriter =
                     new java.io.FileWriter(fileName);
@@ -287,12 +342,25 @@ public class FileHandler {
                     sheet.getRow(i).getCell(j).setCellValue(s);
                 } else if (i == 0) {
                     sheet.getRow(i).getCell(j).setCellValue("task" + j);
-                } else if (j == 0) {
-                    if (s == "sod" || s == "bod") {
-                        sheet.getRow(i).getCell(j).setCellValue("task" + i);
-                    } else {
+                } else if(j == 0){
+                    sheet.getRow(i).getCell(j).setCellValue("user" + i);
+               }else {
+                    sheet.getRow(i).getCell(j).setCellValue("0");
+                }
+            }
+        }
+    }
+    private void initSheetOD(HSSFSheet sheet, String s) {
+        for (int i = 0; i <= c.num_tasks; i++) {
+            sheet.createRow(i);
+            for (int j = 0; j <= c.num_tasks; j++) {
+                sheet.getRow(i).createCell(j);
+                if (i == 0 && j == 0) {
+                    sheet.getRow(i).getCell(j).setCellValue(s);
+                }else if (i == 0) {
+                        sheet.getRow(i).getCell(j).setCellValue("task" + j);
+                } else if(j == 0 ){
                         sheet.getRow(i).getCell(j).setCellValue("user" + i);
-                    }
                 } else {
                     sheet.getRow(i).getCell(j).setCellValue("0");
                 }
@@ -300,7 +368,8 @@ public class FileHandler {
         }
     }
 
-    private void createExcelFile() throws IOException {
+
+    private void createExcelFile(String s) throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheetua = workbook.createSheet("ua");
         HSSFSheet sheetuc = workbook.createSheet("uc");
@@ -311,22 +380,27 @@ public class FileHandler {
 
         initSheet(sheetua, "ua");
         initSheet(sheetuc, "uc");
-        initSheet(sheetbod, "bod");
-        initSheet(sheetsod, "sod");
+        initSheetOD(sheetbod, "bod");
+        initSheetOD(sheetsod, "sod");
 
         //// TODO: 10/8/16 FIX BOD / SOD
         //BoD
+        List<Integer> tmp = new ArrayList<Integer>();
         for (int i = 0; i < c.num_tasks; i++) {
-            for (int j = 0; j < c.binding_constraints.get(i).size(); j++) {
-                sheetbod.getRow(i + 1).getCell(j + 1).setCellValue("1");
+            tmp.addAll(c.binding_constraints.get(i));
+            for (int j = 0; j < tmp.size(); j++) {
+                sheetbod.getRow(i + 1).getCell(tmp.get(j)+1).setCellValue("1");
             }
+            tmp.clear();
         }
 
         //SoD
         for (int i = 0; i < c.num_tasks; i++) {
-            for (int j = 0; j < c.separating_constraints.get(i).size(); j++) {
-                sheetsod.getRow(i + 1).getCell(j + 1).setCellValue("1");
+            tmp.addAll(c.separating_constraints.get(i));
+            for (int j = 0; j < tmp.size(); j++) {
+                sheetsod.getRow(i + 1).getCell(tmp.get(j)+1).setCellValue("1");
             }
+            tmp.clear();
         }
         //ua
         for (int i = 0; i < c.num_users; i++) {
@@ -365,7 +439,8 @@ public class FileHandler {
         sheetdeets.getRow(1).getCell(1).setCellValue(Integer.toString(c.num_tasks));
 
         try {
-            workbook.write(new FileOutputStream("data.xls"));
+            String fileName = s + ".xls";
+            workbook.write(new FileOutputStream(fileName));
         } catch (IOException e) {
             e.printStackTrace();
         }

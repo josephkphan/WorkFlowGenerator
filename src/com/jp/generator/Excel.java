@@ -8,7 +8,7 @@ public class Excel {
     public Excel(int num_users, int num_tasks, int num_orders, int authorize, int BoDPercent, int SodPercent) {
         ConstraintsHandler c = new ConstraintsHandler(num_users, num_tasks, num_orders, authorize, BoDPercent, SodPercent);
         FileHandler file = new FileHandler(c);
-        file.writeExcelFile();
+        file.writeExcelFile("data");
     }
 
 }

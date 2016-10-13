@@ -1,5 +1,6 @@
 package com.jp.main;
 
+import com.jp.generator.All;
 import com.jp.generator.CplexText;
 import com.jp.generator.Excel;
 import com.jp.generator.TextFiles;
@@ -10,11 +11,12 @@ public class Main {
         int numUsers, numTasks, numOrders, authorize, bodPercent, sodPercent;
         String generatorType;
 
-        numUsers = numTasks = 10;
+        numUsers = 50;
+        numTasks = 2 * numUsers;
         numOrders = 10;
         authorize = 5;
-        bodPercent = sodPercent = 50;
-        generatorType = "EXCEL";
+        bodPercent = sodPercent = 10;
+        generatorType = "ALL";
 
         /* Checking Variables */
         if ((bodPercent + sodPercent) >= 100)
@@ -34,6 +36,8 @@ public class Main {
             case "EXCEL":
                 new Excel(numUsers, numTasks, numOrders, authorize, bodPercent, sodPercent);
                 break;
+            case "ALL":
+                new All(numUsers, numTasks, numOrders, authorize, bodPercent, sodPercent);
             default:
                 System.out.println("Put in a valid Generator");
                 break;

@@ -1,6 +1,7 @@
 package com.jp.generator;
 import com.jp.helper.ConstraintsHandler;
 import com.jp.helper.FileHandler;
+import com.jp.helper.fileEditor;
 
 public class CplexText {
 
@@ -8,5 +9,6 @@ public class CplexText {
         ConstraintsHandler c = new ConstraintsHandler(num_users, num_tasks, num_orders, authorize, BoDPercent, SodPercent);
         FileHandler file = new FileHandler(c);
         file.writeCplexModFile();
+        fileEditor fe = new fileEditor(c);
     }
 }

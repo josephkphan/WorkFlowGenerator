@@ -2,9 +2,7 @@ package com.jp.helper;
 
 import java.util.*;
 
-/**
- * Created by jphan on 10/8/16.
- */
+
 public class ConstraintsHandler {
     public int num_users;
     public int num_tasks;
@@ -91,7 +89,9 @@ public class ConstraintsHandler {
         System.out.println("users:" + num_users + "\ntasks: " + num_tasks + "\norders: " + num_orders);
     }
 
-    private void create_authorizations_matrix(int factor) {
+    private void create_authorizations_matrix(int percent) {
+        double dx = percent * .01 * num_tasks;
+        int factor = (int) dx;
         int rand, repetitions;
         int[] check = new int[num_tasks];
         Random random = new Random();
@@ -154,7 +154,7 @@ public class ConstraintsHandler {
             for (int j = 0; j < num_tasks; j++) {
                 if (authorizations[i][j] == 0)
                     continue;
-                user_capability[i][j] = 10000000;
+                user_capability[i][j] = num_tasks*10;
             }
         }
         p.array(user_capability, "User Capability Matrix");
@@ -173,6 +173,7 @@ public class ConstraintsHandler {
         int num_constraints = (int) dx;
         Random random = new Random();
         int task1, task2;
+        System.out.println("NUM CONSTRAST:!!!!" + num_constraints);
         Set<Integer> temp1, temp2, empty_set;
         for (int i = 0; i < num_constraints; i++) {
             task1 = task2 = 0;
