@@ -16,20 +16,28 @@ public class All {
         //file.writeExcelFile("data");
 
         //removingBoD Constraints
+
         fileEditor fe = new fileEditor(c);
+
+        //todo make another file for opl for #b and #s
         for(int i=9; i>=0; i--) {
             //UC
-            fe.reduceCapability(i);
+            fe.reduceCapability();
             file.write_uc_file("java_uc_" + i);
             file.writeCplexUC("opl_uc_" + i);
 
             // Bod
             fe.reduceBoD();
+            c.createSoDBoD();
+            c.removeRedundantBinding();
             file.writeCplexBC("opl_bc_" + i);
             file.write_bc_file("java_bc_"+i);
 
+
             //Sod
             fe.reduceSoD();
+            c.createSoDBoD();
+            c.removeRedundantBinding();
             file.write_sc_file("java_sc_" + i);
             file.writeCplexSC("opl_sc_"+i);
 
@@ -38,6 +46,7 @@ public class All {
             file.write_ua_file("java_ua_" + i);
             file.writeCplexUA("opl_ua_"+i);
         }
+
 
 
     }

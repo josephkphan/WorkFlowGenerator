@@ -29,15 +29,15 @@ public class ConstraintsHandler {
 
     private void createAllConstraints(int BoDPercent, int SoDPercent, int authorize) {
         create_task_orders();
-        create_authorizations_matrix(authorize);
-        create_user_capability_matrix();
         create_binding_constraints(BoDPercent);
         create_separating_constraints(SoDPercent);
+        create_authorizations_matrix(authorize);
+        create_user_capability_matrix();
         //create_probability_matrix();
 
     }
 
-    private void removeRedundantBinding() {
+    public void removeRedundantBinding() {
         boolSoD = new boolean[num_tasks];
         boolBoD = new boolean[num_tasks];
         for (int i = 0; i < num_tasks; i++) {
@@ -155,7 +155,7 @@ public class ConstraintsHandler {
             for (int j = 0; j < num_tasks; j++) {
                 if (authorizations[i][j] == 0)
                     continue;
-                user_capability[i][j] = num_tasks*10;
+                user_capability[i][j] = num_tasks*5;
             }
         }
         p.array(user_capability, "User Capability Matrix");
@@ -299,7 +299,7 @@ public class ConstraintsHandler {
 
     }
 
-    private void createSoDBoD() {
+    public void createSoDBoD() {
         sod = new int[num_tasks][num_tasks];
         bod = new int[num_tasks][num_tasks];
         for (int i = 0; i < num_tasks; i++) {

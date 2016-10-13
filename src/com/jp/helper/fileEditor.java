@@ -99,14 +99,13 @@ public class fileEditor {
 
     }
 
-    public void reduceCapability(int multiplier){
-        double dx = (double) multiplier / 10.0 * (double) c.num_tasks;
-        int capability = (int) dx;
+    public void reduceCapability(){
+
 
         for (int i=0; i< c.num_users; i++){
             for (int j = 0; j<c.num_tasks; j++) {
                 if(c.user_capability[i][j] > 0){
-                    c.user_capability[i][j] = capability;
+                    c.user_capability[i][j] -= c.num_tasks/2;
                 }
             }
         }

@@ -11,8 +11,9 @@ public class Main {
         int numUsers, numTasks, numOrders, authorize, bodPercent, sodPercent;
         String generatorType;
 
-        numUsers = 50;
-        numTasks = 2 * numUsers;
+        numUsers = 100;
+       // numTasks = 2 * numUsers;
+        numTasks = 200;
         numOrders = 10;
         authorize = 10;
         bodPercent = sodPercent = 10;
@@ -38,6 +39,7 @@ public class Main {
                 break;
             case "ALL":
                 new All(numUsers, numTasks, numOrders, authorize, bodPercent, sodPercent);
+                break;
             default:
                 System.out.println("Put in a valid Generator");
                 break;

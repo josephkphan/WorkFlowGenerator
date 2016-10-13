@@ -20,10 +20,10 @@ public class FileHandler {
 
     public void writeCplexModFile() {
         writeCplexAVG("opl_avg_10");
-        write_bc_file("opl_bc_10");
-        write_sc_file("opl_sc_10");
-        write_ua_file("opl_ua_10");
-        write_uc_file("opl_uc_10");
+        writeCplexBC("opl_bc_10");
+        writeCplexSC("opl_sc_10");
+        writeCplexUA("opl_ua_10");
+        writeCplexUC("opl_uc_10");
     }
 
     public void writeJavaDataFiles() {
