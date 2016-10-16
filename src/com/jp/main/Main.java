@@ -11,11 +11,11 @@ public class Main {
         int numUsers, numTasks, numOrders, authorize, bodPercent, sodPercent;
         String generatorType;
 
-        numUsers = 100;
-       // numTasks = 2 * numUsers;
-        numTasks = 200;
+        numUsers = 200;
+        //numTasks = 2 * numUsers;
+        numTasks = 400;
         numOrders = 10;
-        authorize = 10;
+        authorize = 20;
         bodPercent = sodPercent = 10;
         generatorType = "ALL";
 

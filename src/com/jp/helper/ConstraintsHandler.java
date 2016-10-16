@@ -90,7 +90,7 @@ public class ConstraintsHandler {
     }
 
     private void create_authorizations_matrix(int percent) {
-        double dx = percent * .01 * num_tasks;
+        double dx = percent * .01 * num_users;
         int factor = (int) dx;
         int rand, repetitions;
         int[] check = new int[num_tasks];

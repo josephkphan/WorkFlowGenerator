@@ -19,7 +19,7 @@ public class All {
 
         fileEditor fe = new fileEditor(c);
 
-        //todo make another file for opl for #b and #s
+        /*
         for(int i=9; i>=0; i--) {
             //UC
             fe.reduceCapability();
@@ -47,7 +47,7 @@ public class All {
             file.writeCplexUA("opl_ua_"+i);
         }
 
-
+    */
 
     }
 }
